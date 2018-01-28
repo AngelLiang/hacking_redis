@@ -56,30 +56,33 @@ sds sdsnewlen(const void *init, size_t initlen) {
     } else {
         sh = zcalloc(sizeof(struct sdshdr)+initlen+1);
     }
-    if (sh == NULL) return NULL;
+
+    if (sh == NULL) return NULL;    // 如果内存分配为空，则返回
+    
     sh->len = initlen;
     sh->free = 0;
+
     if (initlen && init)
-        memcpy(sh->buf, init, initlen);
-    sh->buf[initlen] = '\0';
+        memcpy(sh->buf, init, initlen); // 拷贝初始化字段到buf处
+    sh->buf[initlen] = '\0';            // 末尾添加'0\'
     return (char*)sh->buf;
 }
 
 /* Create an empty (zero length) sds string. Even in this case the string
  * always has an implicit null term. */
 sds sdsempty(void) {
-    return sdsnewlen("",0);
+    return sdsnewlen("",0); // 调用 sdsnewlen
 }
 
 /* Create a new sds string starting from a null terminated C string. */
 sds sdsnew(const char *init) {
     size_t initlen = (init == NULL) ? 0 : strlen(init);
-    return sdsnewlen(init, initlen);
+    return sdsnewlen(init, initlen);    // 调用 sdsnewlen
 }
 
 /* Duplicate an sds string. */
 sds sdsdup(const sds s) {
-    return sdsnewlen(s, sdslen(s));
+    return sdsnewlen(s, sdslen(s)); // 调用 sdsnewlen
 }
 
 /* Free an sds string. No operation is performed if 's' is NULL. */
