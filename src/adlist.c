@@ -42,10 +42,11 @@ list *listCreate(void)
 {
     struct list *list;
 
+    // 获取内存空间
     if ((list = zmalloc(sizeof(*list))) == NULL)
         return NULL;
-    list->head = list->tail = NULL;
-    list->len = 0;
+    list->head = list->tail = NULL; // 初始化表头和表尾
+    list->len = 0;                  // 初始化len字段
     list->dup = NULL;
     list->free = NULL;
     list->match = NULL;
@@ -62,7 +63,7 @@ void listRelease(list *list)
 
     current = list->head;
     len = list->len;
-    while(len--) {
+    while(len--) {      // 循环释放链表
         next = current->next;
         if (list->free) list->free(current->value);
         zfree(current);
@@ -81,6 +82,7 @@ list *listAddNodeHead(list *list, void *value)
 {
     listNode *node;
 
+    // 新建一个节点node
     if ((node = zmalloc(sizeof(*node))) == NULL)
         return NULL;
     node->value = value;
@@ -88,12 +90,12 @@ list *listAddNodeHead(list *list, void *value)
         list->head = list->tail = node;
         node->prev = node->next = NULL;
     } else {
-        node->prev = NULL;
-        node->next = list->head;
-        list->head->prev = node;
-        list->head = node;
+        node->prev = NULL;          // 设置node节点前一个节点为NULL
+        node->next = list->head;    // 设置node节点后一个节点为list的头部
+        list->head->prev = node;    // 把list头部的前一个节点指向node
+        list->head = node;          // list头部赋值为node
     }
-    list->len++;
+    list->len++;    // 增加长度
     return list;
 }
 
@@ -288,11 +290,11 @@ listNode *listSearchKey(list *list, void *key)
     listNode *node;
 
     iter = listGetIterator(list, AL_START_HEAD);
-    while((node = listNext(iter)) != NULL) {
-        if (list->match) {
-            if (list->match(node->value, key)) {
+    while((node = listNext(iter)) != NULL) {    // 循环获取下一个链表节点
+        if (list->match) {                      // 如果链表的匹配函数指针不为空
+            if (list->match(node->value, key)) {// 匹配成功
                 listReleaseIterator(iter);
-                return node;
+                return node;    // 返回节点
             }
         } else {
             if (key == node->value) {
