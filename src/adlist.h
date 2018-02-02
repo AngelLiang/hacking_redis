@@ -99,16 +99,17 @@ typedef struct list {
 #define listGetMatchMethod(l) ((l)->match)
 
 /* Prototypes */
-// 创建一个不包含任何节点的新链表
+// 创建一个不包含任何节点的新链表 - O(1)
 list *listCreate(void);
-// 释放给定链表，以及链表中的所有节点
+// 释放给定链表，以及链表中的所有节点 - O(N)
 void listRelease(list *list);
-// 将一个包含给定值的新节点添加到给定链表的表头
+// 将一个包含给定值的新节点添加到给定链表的表头 - O(1)
 list *listAddNodeHead(list *list, void *value);
-// 将一个包含给定值的新节点添加到给定链表的表尾
+// 将一个包含给定值的新节点添加到给定链表的表尾 - O(1)
 list *listAddNodeTail(list *list, void *value);
-// 将一个包含给定值的新节点添加到给定节点的之前或之后
+// 将一个包含给定值的新节点添加到给定节点的之前或之后 - O(1)
 list *listInsertNode(list *list, listNode *old_node, void *value, int after);
+// 从链表中删除给定节点 - O(N)
 void listDelNode(list *list, listNode *node);
 listIter *listGetIterator(list *list, int direction);
 listNode *listNext(listIter *iter);
