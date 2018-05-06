@@ -466,6 +466,7 @@ struct evictionPoolEntry {
  * by integers from 0 (the default database) up to the max configured
  * database. The database number is the 'id' field in the structure. */
 typedef struct redisDb {
+    // 数据库键空间，保存着数据库中的所有键值对
     dict *dict;                 /* The keyspace for this DB */
     dict *expires;              /* Timeout of keys with a timeout set */
     dict *blocking_keys;        /* Keys with clients waiting for data (BLPOP) */
@@ -669,7 +670,9 @@ struct redisServer {
     pid_t pid;                  /* Main process pid. */
     char *configfile;           /* Absolute config file path, or NULL */
     int hz;                     /* serverCron() calls frequency in hertz */
+    // 一个数组，保存着数据库中的所有数据库
     redisDb *db;
+
     dict *commands;             /* Command table */
     dict *orig_commands;        /* Command table before command renaming. */
     aeEventLoop *el;
@@ -682,6 +685,7 @@ struct redisServer {
     int cronloops;              /* Number of times the cron function run */
     char runid[REDIS_RUN_ID_SIZE+1];  /* ID always different at every exec. */
     int sentinel_mode;          /* True if this instance is a Sentinel. */
+    
     /* Networking */
     int port;                   /* TCP listening port */
     int tcp_backlog;            /* TCP listen() backlog */
@@ -703,6 +707,7 @@ struct redisServer {
     char neterr[ANET_ERR_LEN];   /* Error buffer for anet.c */
     dict *migrate_cached_sockets;/* MIGRATE cached sockets */
     uint64_t next_client_id;    /* Next client unique ID. Incremental. */
+    
     /* RDB / AOF loading information */
     int loading;                /* We are loading data from disk if true */
     off_t loading_total_bytes;
