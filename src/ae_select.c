@@ -31,6 +31,7 @@
 
 #include <string.h>
 
+// 状态
 typedef struct aeApiState {
     fd_set rfds, wfds;
     /* We need to have a copy of the fd sets as it's not safe to reuse
@@ -38,12 +39,15 @@ typedef struct aeApiState {
     fd_set _rfds, _wfds;
 } aeApiState;
 
+/*
+ * 创建
+ */
 static int aeApiCreate(aeEventLoop *eventLoop) {
     aeApiState *state = zmalloc(sizeof(aeApiState));
 
     if (!state) return -1;
-    FD_ZERO(&state->rfds);
-    FD_ZERO(&state->wfds);
+    FD_ZERO(&state->rfds);  // 初始化 rfds
+    FD_ZERO(&state->wfds);  // 初始化 wfds
     eventLoop->apidata = state;
     return 0;
 }
@@ -58,6 +62,9 @@ static void aeApiFree(aeEventLoop *eventLoop) {
     zfree(eventLoop->apidata);
 }
 
+/*
+ * 添加event
+ */
 static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
     aeApiState *state = eventLoop->apidata;
 
@@ -66,6 +73,9 @@ static int aeApiAddEvent(aeEventLoop *eventLoop, int fd, int mask) {
     return 0;
 }
 
+/*
+ * 删除event
+ */
 static void aeApiDelEvent(aeEventLoop *eventLoop, int fd, int mask) {
     aeApiState *state = eventLoop->apidata;
 
@@ -73,10 +83,14 @@ static void aeApiDelEvent(aeEventLoop *eventLoop, int fd, int mask) {
     if (mask & AE_WRITABLE) FD_CLR(fd,&state->wfds);
 }
 
+/*
+ * 轮询poll
+ */
 static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
     aeApiState *state = eventLoop->apidata;
     int retval, j, numevents = 0;
 
+    // 拷贝描述符状态
     memcpy(&state->_rfds,&state->rfds,sizeof(fd_set));
     memcpy(&state->_wfds,&state->wfds,sizeof(fd_set));
 
