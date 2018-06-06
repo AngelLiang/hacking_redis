@@ -1,4 +1,4 @@
-# Learn in Redis
+# hacking redis
 
 学习Redis源代码，Redis版本为3.0。
 
